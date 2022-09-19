@@ -29,9 +29,9 @@ class RequestRiotData:
         r = request.get(url).json()
         return r["puuid"]
 
-    def get_match_ids(self, in_puuid):
+    def get_match_ids(self, in_puuid, in_start, in_count):
         # using lol_watcher api because if I try to make the request myself I get 403 error :(
-        return self.lol_watcher.match.matchlist_by_puuid(self.region, in_puuid)
+        return self.lol_watcher.match.matchlist_by_puuid(self.region, in_puuid, in_start, in_count)
         # vvv below is the code that throws 403 error on request vvv
         # url = urlBase + "match/v5/matches/by_puuid/" + in_puuid + "/ids" + "?api_key=" + self.apiKey
         # r = request.get(url)
@@ -53,15 +53,51 @@ if __name__ == '__main__':
     print("done.")
     print("puuid: ")
     print(my_puuid)
-    # get match ids from puuid
-    print("Getting match ids from summoner " + my_puuid + "...")
-    my_matchIds = proxy.get_match_ids(my_puuid)
-    print("done.")
-    print("Match ids from last 100 matches: ")
-    print(my_matchIds)
-    # get specific matches
+
+    # write my puuid to a txt file
+    fp = open("data_text/my_puuid.txt", 'w')
+    fp.write(my_puuid)
+
+    # we want my entire match history, but we can only query 100 at a time, so we'll loop until we can't find any more
+    # matches.
+    num_start = 0
+    num_count = 100
+    moreMatches = True
+    while moreMatches:
+
+        # get match ids from puuid
+        print("Getting match ids from summoner " + my_puuid + "...")
+
+        # use try and catch 400 Client Error to find when we've reached the end of match history
+        # try:
+        my_matchIds = proxy.get_match_ids(my_puuid, num_start, num_count)
+        # except:
+
+        print("done.")
+        print("Match ids from " + str(num_start) + " to " + str(num_count) + " matches: ")
+        print(my_matchIds)
+
+        # THIS DOESNT WORK BUT I COULDNT KEEP TESTING BECAUSE OF THE REQUEST LIMIT SO ILL FIGURE THIS OUT LATER THE
+        # CODE LOOPS INFINITELY AT THE MOMENT FYI
+        # stop when there are no more matches
+        if my_matchIds == '[]':
+            moreMatches = False
+            break
+
+        # only overwrite the entire file if it's the first 100 games
+        if num_start == 0:
+            # write matchIds to a txt file
+            f = open("data_text/my_matchIds.txt", 'w')
+            f.write(str(my_matchIds))
+        else:
+            # append matchIds to the txt file
+            f = open("data_text/my_matchIds.txt", 'a')
+            f.write(str(my_matchIds))
+        num_start += 100
 
     # get as many as possible?
+
+    # get specific matches
 
     # get specific data from those matches and write to a csv file
 
