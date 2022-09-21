@@ -37,6 +37,9 @@ class RequestRiotData:
         # r = request.get(url)
         # return r.json()
 
+    def get_matches_from_summoner_champion(self, summoner_name, champion_name):
+        print("hello :^)")
+
 
 # driver to test methods
 if __name__ == '__main__':
@@ -110,11 +113,13 @@ if __name__ == '__main__':
     # it is of the form:
     # [A, A, A][A, A, A]
     # where A is a match id
+    count = 0
     for i in range(0, len(read_matchIds)):
         if read_matchIds[i] == ',' or read_matchIds[i] == '[':
             match_ids.append(add_this)
             add_this = ""
             print("Added " + add_this)
+            count += 1
         elif read_matchIds[i] == ']' or read_matchIds[i] == ' ' or read_matchIds[i] == '\'':
             print("ignore this")
         else:
@@ -124,8 +129,11 @@ if __name__ == '__main__':
         print("Match Id: " + i)
 
     print("Type of match_ids: " + str(type(match_ids)))
+    print("Number of matches: " + str(count))
     # get specific matches
-
     # get specific data from those matches and write to a csv file
+    # parse for matches matchDto => InfoDto => participants[] of type ParticipantDto => summonerName && championName
+    # for each matchDto that hase summonerName and championName; store matchDto
+    # write matchDto list to a text file
 
     # time for machine learning :^)
