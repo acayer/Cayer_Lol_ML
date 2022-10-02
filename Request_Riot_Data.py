@@ -37,16 +37,34 @@ class RequestRiotData:
         # r = request.get(url)
         # return r.json()
 
-    def get_matches_from_summoner_champion(self, summoner_name, champion_name):
-        print("hello :^)")
+    def get_matches_from_summoner_champion(self, matchIds, summoner_name, champion_name):
+        matches = []
+        # print("M_IDS: " + matchIds[1])
+        for j in range(1, len(matchIds)):
+            # making the request myself gives me 403 (Forbidden) error so I will use lol_watcher api here
+            # url = urlBase + "match/v5/matches/" + j + "?api_key=" + self.apiKey
+            # matchDto = request.get(url).json()
+            print("j here is: " + matchIds[j])
+            matchDto = self.lol_watcher.match.by_id(region, matchIds[j])
+            print("MatchDto: " + str(matchDto))
+            # only 'CLASSIC' matches on on the current summoner's rift and NOT 'CUSTOME_GAME'
+            if matchDto['info']['gameMode'] == 'CLASSIC' and matchDto['info']['mapId'] == 11 and \
+                    matchDto['info']['gameType'] != 'CUSTOM_GAME':
+                for i in range(0, 9): # matchDto['info']['participants'].__sizeof__()
+                    if matchDto['info']['participants'][i]['summonerName'] == summoner_name and \
+                            matchDto['info']['participants'][i]['championName'] == champion_name:
+                        matches.append(matchDto['info']['participants'][i])
+        print("Most recent match participantDto: " + str(matches[0]))
+        return matches
 
 
 # driver to test methods
 if __name__ == '__main__':
 
-    # init proxy
+    # input your key to console
     print("Please enter your Riot API Key: ")
     key = input()
+    # init proxy
     reg = "na1"
     proxy = RequestRiotData(key, reg)
     # COMMENT FROM HERE BECAUSE WE DONT NEED TO WRITE TO FILES AGAIN****************************************************
@@ -130,10 +148,17 @@ if __name__ == '__main__':
 
     print("Type of match_ids: " + str(type(match_ids)))
     print("Number of matches: " + str(count))
-    # get specific matches
-    # get specific data from those matches and write to a csv file
-    # parse for matches matchDto => InfoDto => participants[] of type ParticipantDto => summonerName && championName
-    # for each matchDto that hase summonerName and championName; store matchDto
-    # write matchDto list to a text file
 
+    # get specific matches
+    sName = 'Super Lemone'
+    cName = 'Nasus'
+    # THIS BLOCK IS COMMENTED OUT BECAUSE THE MATCHDATA IS ALREADY WRITTEN TO A FILE************************************
+    # matchData = proxy.get_matches_from_summoner_champion(match_ids, sName, cName)
+    # write the match ParticipantDto objects to a txt file of the following form -
+    # fw = open('data_text/matches_' + sName + '_' + cName + '.txt', 'w')
+    # fw.write(str(matchData))
+    # ******************************************************************************************************************
+    # get specific data from those matches and write to a csv file
+    # let's calculate the KDAs from the participantDto list and store them
+    
     # time for machine learning :^)
