@@ -1,5 +1,6 @@
 # Making my own wrapper class for requesting data from Riot API
 import requests as request
+import pickle as pickler
 from riotwatcher import LolWatcher, ApiError
 
 
@@ -154,11 +155,40 @@ if __name__ == '__main__':
     cName = 'Nasus'
     # THIS BLOCK IS COMMENTED OUT BECAUSE THE MATCHDATA IS ALREADY WRITTEN TO A FILE************************************
     # matchData = proxy.get_matches_from_summoner_champion(match_ids, sName, cName)
-    # write the match ParticipantDto objects to a txt file of the following form -
-    # fw = open('data_text/matches_' + sName + '_' + cName + '.txt', 'w')
+    # serialize the match ParticipantDto objects to a file using pickle
+    # fw = open('data_text/matches_' + sName + '_' + cName + '.dat', 'wb')
+    # pickler.dump(matchData, fw)
+    # fw.close()
     # fw.write(str(matchData))
     # ******************************************************************************************************************
+
+    # let's parse the txt file now
+    # lol_watcher1 = LolWatcher(key)
+    # lol_watcher1.__init_subclass__(participantDto)
+    input_matches = open('data_text/matches_Super Lemone_Nasus.dat', 'rb')
+    eof = False
+    while not eof:
+        try:
+            partDtos = pickler.load(input_matches)
+        except EOFError:
+            eof = True
+    input_matches.close()
+    print("Type of matches: " + str(partDtos[0]))
+    # read_part = input_matches.read()
+    # print("Type of matches: " + str(type(read_part)))
+
     # get specific data from those matches and write to a csv file
     # let's calculate the KDAs from the participantDto list and store them
-    
+    kdas = []
+    counter = 0
+    for i in partDtos:
+        if i['deaths'] != 0:
+            kda = (i['kills'] + i['assists']) / i['deaths']
+            kdas.append(kda)
+        else:
+            kda = i['kills'] + i['assists']
+            kdas.append(kda)
+        print("kda " + str(counter) + ": " + str(kdas[counter]))
+        counter = counter + 1
+
     # time for machine learning :^)
