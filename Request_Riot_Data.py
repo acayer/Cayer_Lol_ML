@@ -144,7 +144,7 @@ class RequestRiotData:
 
             # use try and catch 400 Client Error to find when we've reached the end of match history
             # try:
-            my_matchIds = proxy.get_match_ids(my_puuid, num_start, num_count)
+            my_matchIds = self.get_match_ids(my_puuid, num_start, num_count)
             # except:
 
             print("done.")
@@ -334,33 +334,33 @@ class RequestRiotData:
 
 
 # driver to test/use methods
-if __name__ == '__main__':
-
-    # input your key to console
-    print("Please enter your Riot API Key: ")
-    key = input()
-
-    # init proxy
-    reg = "na1"
-    proxy = RequestRiotData(key, reg)
-    # web requests to riot api to get data and write it to text files
-    # proxy.get_summoner_puuid('Super Lemone', "data_text/my_puuid.txt")
-    # proxy.write_match_ids_text(proxy.get_puuid_from_text("data_text/my_puuid.txt"))
-
-    # read puuid and matchIds from existing text files
-    read_puuid = proxy.get_puuid_from_text("data_text/my_puuid.txt")
-    read_matchIds = proxy.get_matchIds_from_text("data_text/my_matchIds.txt")
-    match_ids_rd = proxy.parse_match_ids_text(read_matchIds)
-
-    # get specific matches
-    sName = 'Super Lemone'
-    cName = 'Nasus'
-    # web requests to riot api to get data and write it to text files
-    # proxy.get_matches_from_summoner_champion(match_ids_rd, sName, cName)
-    # read participantDto data from existing dat files
-    partDto = proxy.get_matches_from_dat('data_text/matches_Super Lemone_Nasus.dat')
-
-    # let's calculate the KDAs from the participantDto list and store them
-    kdas = proxy.compute_kdas(partDto)
-
-    # time for machine learning :^)
+# if __name__ == '__main__':
+#
+#     # input your key to console
+#     print("Please enter your Riot API Key: ")
+#     key = input()
+#
+#     # init proxy
+#     reg = "na1"
+#     proxy = RequestRiotData(key, reg)
+#     # web requests to riot api to get data and write it to text files
+#     # proxy.get_summoner_puuid('Super Lemone', "data_text/my_puuid.txt")
+#     # proxy.write_match_ids_text(proxy.get_puuid_from_text("data_text/my_puuid.txt"))
+#
+#     # read puuid and matchIds from existing text files
+#     read_puuid = proxy.get_puuid_from_text("data_text/my_puuid.txt")
+#     read_matchIds = proxy.get_matchIds_from_text("data_text/my_matchIds.txt")
+#     match_ids_rd = proxy.parse_match_ids_text(read_matchIds)
+#
+#     # get specific matches
+#     sName = 'Super Lemone'
+#     cName = 'Nasus'
+#     # web requests to riot api to get data and write it to text files
+#     # proxy.get_matches_from_summoner_champion(match_ids_rd, sName, cName)
+#     # read participantDto data from existing dat files
+#     partDto = proxy.get_matches_from_dat('data_text/matches_Super Lemone_Nasus.dat')
+#
+#     # let's calculate the KDAs from the participantDto list and store them
+#     kdas = proxy.compute_kdas(partDto)
+#
+#     # time for machine learning :^)
